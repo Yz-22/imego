@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>معرض الصور</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            direction: rtl;
+            color: #343a40;
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
+        .image-upload-area {
+            border: 2px dashed #cbd5e0;
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+        .image-upload-area:hover {
+            border-color: #a0aec0;
+            background-color: #f7fafc;
+        }
+        .image-preview {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 0.75rem;
+            margin-top: 1rem;
+            display: none; /* Hidden by default */
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+        .gallery-item:hover {
+            transform: translateY(-5px);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+        .gallery-item-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
+            color: white;
+            padding: 1rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        .gallery-item:hover .gallery-item-overlay {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-lg p-4 flex justify-between items-center border-b border-gray-200">
+        <div class="flex items-center">
+            <span class="text-3xl font-extrabold text-blue-700 ml-2">ImageFlow</span>
+            <span class="text-2xl font-bold text-gray-800">معرض الصور الخاص بي</span>
+        </div>
+        <nav>
+            <ul class="flex space-x-6 space-x-reverse items-center">
+                <li><a href="#" class="text-gray-700 hover:text-blue-600 font-medium transition duration-300">الصفحة الرئيسية</a></li>
+                <li><a href="#" class="text-gray-700 hover:text-blue-600 font-medium transition duration-300">استكشاف</a></li>
+                <li><a href="#" class="btn-primary flex items-center">
+                    <i class="fas fa-upload ml-2"></i>
+                    <span>رفع صورة</span>
+                </a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="flex-grow container mx-auto p-6">
+
+        <section class="card p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">رفع صورة جديدة</h2>
+            <div id="upload-area" class="image-upload-area">
+                <input type="file" id="image-input" accept="image/*" class="hidden">
+                <i class="fas fa-image text-blue-500 text-5xl mb-4"></i>
+                <p class="text-gray-700 text-lg font-semibold">اسحب وأفلت صورتك هنا أو <span class="text-blue-600 cursor-pointer">انقر للرفع</span></p>
+                <p class="text-gray-500 text-sm mt-2">صيغ الملفات المدعومة: JPG, PNG, GIF</p>
+            </div>
+            <img id="uploaded-image-preview" src="#" alt="Image Preview" class="image-preview">
+            <input type="text" id="image-description" placeholder="أضف وصفاً للصورة (اختياري)..." class="w-full p-3 border border-gray-300 rounded-lg mt-4 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800">
+            <button id="add-to-gallery-btn" class="btn-primary w-full mt-4 flex items-center justify-center">
+                <i class="fas fa-plus ml-2"></i>
+                <span>إضافة إلى المعرض</span>
+            </button>
+        </section>
+
+        <section class="card p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">معرض الصور</h2>
+            <div id="image-gallery" class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="https://placehold.co/400x200/4a5568/ffffff?text=صورة+1" alt="صورة جميلة">
+                    <div class="gallery-item-overlay">
+                        <h3 class="font-semibold text-lg">صورة طبيعية</h3>
+                        <p class="text-sm">منظر طبيعي خلاب.</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://placehold.co/400x200/2d3748/ffffff?text=صورة+2" alt="صورة مدينة">
+                    <div class="gallery-item-overlay">
+                        <h3 class="font-semibold text-lg">أضواء المدينة</h3>
+                        <p class="text-sm">بانوراما ليلية للمدينة.</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://placehold.co/400x200/a0aec0/4a5568?text=صورة+3" alt="صورة حيوان">
+                    <div class="gallery-item-overlay">
+                        <h3 class="font-semibold text-lg">قطة لطيفة</h3>
+                        <p class="text-sm">صورة مقربة لقطة تلعب.</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://placehold.co/400x200/718096/ffffff?text=صورة+4" alt="صورة طعام">
+                    <div class="gallery-item-overlay">
+                        <h3 class="font-semibold text-lg">وجبة شهية</h3>
+                        <p class="text-sm">طبق طعام لذيذ.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-900 text-white p-6 text-center mt-8">
+        <p class="mb-3">&copy; 2023 ImageFlow. جميع الحقوق محفوظة.</p>
+        <div class="flex justify-center space-x-6 space-x-reverse mt-2">
+            <a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300">سياسة الخصوصية</a>
+            <a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300">شروط الخدمة</a>
+            <a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300">اتصل بنا</a>
+        </div>
+        <div class="flex justify-center space-x-4 space-x-reverse mt-4 text-xl">
+            <a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300"><i class="fab fa-facebook"></i></a>
+            <a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300"><i class="fab fa-youtube"></i></a>
+        </div>
+    </footer>
+
+    <script>
+        const uploadArea = document.getElementById('upload-area');
+        const imageInput = document.getElementById('image-input');
+        const uploadedImagePreview = document.getElementById('uploaded-image-preview');
+        const imageDescriptionInput = document.getElementById('image-description');
+        const addToGalleryBtn = document.getElementById('add-to-gallery-btn');
+        const imageGallery = document.getElementById('image-gallery');
+
+        let currentImageFile = null; // To store the file object for adding to gallery
+
+        // Simulate click on hidden file input when upload area is clicked
+        uploadArea.addEventListener('click', () => {
+            imageInput.click();
+        });
+
+        // Handle file selection
+        imageInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                currentImageFile = file;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    uploadedImagePreview.src = e.target.result;
+                    uploadedImagePreview.style.display = 'block'; // Show the preview
+                };
+                reader.readAsDataURL(file);
+            } else {
+                uploadedImagePreview.src = '#';
+                uploadedImagePreview.style.display = 'none';
+                currentImageFile = null;
+            }
+        });
+
+        // Handle drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('border-blue-500', 'bg-blue-50');
+        });
+
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                currentImageFile = file;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    uploadedImagePreview.src = event.target.result;
+                    uploadedImagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert('الرجاء إسقاط ملف صورة صالح.'); // Use custom modal in real app
+            }
+        });
+
+        // Add image to gallery (simulated)
+        addToGalleryBtn.addEventListener('click', () => {
+            if (currentImageFile) {
+                const imageUrl = uploadedImagePreview.src;
+                const description = imageDescriptionInput.value.trim();
+                const imageName = currentImageFile.name.split('.').slice(0, -1).join('.'); // Get name without extension
+
+                const galleryItem = document.createElement('div');
+                galleryItem.classList.add('gallery-item');
+
+                galleryItem.innerHTML = `
+                    <img src="${imageUrl}" alt="${description || imageName}">
+                    <div class="gallery-item-overlay">
+                        <h3 class="font-semibold text-lg">${description || imageName}</h3>
+                        <p class="text-sm">${description ? 'الوصف: ' + description : 'لا يوجد وصف.'}</p>
+                    </div>
+                `;
+                imageGallery.prepend(galleryItem); // Add to the beginning of the gallery
+
+                // Reset upload area
+                uploadedImagePreview.src = '#';
+                uploadedImagePreview.style.display = 'none';
+                imageDescriptionInput.value = '';
+                imageInput.value = ''; // Clear file input
+                currentImageFile = null;
+
+                // Simple message for successful upload (replace with real feedback)
+                alert('تمت إضافة الصورة إلى المعرض بنجاح (محاكاة).'); // Use custom modal in real app
+            } else {
+                alert('الرجاء تحديد صورة لرفعها أولاً.'); // Use custom modal in real app
+            }
+        });
+    </script>
+</body>
+</html>
