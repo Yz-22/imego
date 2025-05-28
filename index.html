@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>معرض الصور</title>
+    <title>معرض الصور الخاص بي</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -94,6 +94,46 @@
         .gallery-item:hover .gallery-item-overlay {
             transform: translateY(0);
         }
+        /* Loader Spinner */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: none; /* Hidden by default */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .alert {
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            display: none; /* Hidden by default */
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+        .user-id-display {
+            background-color: #e2e8f0;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            color: #4a5568;
+            margin-top: 1rem;
+            word-break: break-all; /* Ensure long IDs wrap */
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
@@ -116,8 +156,11 @@
     </header>
 
     <main class="flex-grow container mx-auto p-6">
+        <div class="user-id-display">
+            <span class="font-semibold">معرف المستخدم الخاص بك:</span> <span id="user-id-text">جاري التحميل...</span>
+        </div>
 
-        <section class="card p-6 mb-8">
+        <section class="card p-6 mb-8 mt-4">
             <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">رفع صورة جديدة</h2>
             <div id="upload-area" class="image-upload-area">
                 <input type="file" id="image-input" accept="image/*" class="hidden">
@@ -128,42 +171,16 @@
             <img id="uploaded-image-preview" src="#" alt="Image Preview" class="image-preview">
             <input type="text" id="image-description" placeholder="أضف وصفاً للصورة (اختياري)..." class="w-full p-3 border border-gray-300 rounded-lg mt-4 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800">
             <button id="add-to-gallery-btn" class="btn-primary w-full mt-4 flex items-center justify-center">
-                <i class="fas fa-plus ml-2"></i>
-                <span>إضافة إلى المعرض</span>
+                <span id="button-text">إضافة إلى المعرض</span>
+                <div id="loader" class="loader ml-2"></div>
             </button>
+            <div id="upload-status-alert" class="alert mt-4" role="alert"></div>
         </section>
 
         <section class="card p-6">
             <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">معرض الصور</h2>
             <div id="image-gallery" class="gallery-grid">
-                <div class="gallery-item">
-                    <img src="https://placehold.co/400x200/4a5568/ffffff?text=صورة+1" alt="صورة جميلة">
-                    <div class="gallery-item-overlay">
-                        <h3 class="font-semibold text-lg">صورة طبيعية</h3>
-                        <p class="text-sm">منظر طبيعي خلاب.</p>
-                    </div>
-                </div>
-                <div class="gallery-item">
-                    <img src="https://placehold.co/400x200/2d3748/ffffff?text=صورة+2" alt="صورة مدينة">
-                    <div class="gallery-item-overlay">
-                        <h3 class="font-semibold text-lg">أضواء المدينة</h3>
-                        <p class="text-sm">بانوراما ليلية للمدينة.</p>
-                    </div>
-                </div>
-                <div class="gallery-item">
-                    <img src="https://placehold.co/400x200/a0aec0/4a5568?text=صورة+3" alt="صورة حيوان">
-                    <div class="gallery-item-overlay">
-                        <h3 class="font-semibold text-lg">قطة لطيفة</h3>
-                        <p class="text-sm">صورة مقربة لقطة تلعب.</p>
-                    </div>
-                </div>
-                <div class="gallery-item">
-                    <img src="https://placehold.co/400x200/718096/ffffff?text=صورة+4" alt="صورة طعام">
-                    <div class="gallery-item-overlay">
-                        <h3 class="font-semibold text-lg">وجبة شهية</h3>
-                        <p class="text-sm">طبق طعام لذيذ.</p>
-                    </div>
-                </div>
+                <div class="text-center text-gray-500 col-span-full" id="loading-gallery-message">جاري تحميل الصور...</div>
             </div>
         </section>
     </main>
@@ -183,22 +200,110 @@
         </div>
     </footer>
 
-    <script>
+    <script type="module">
+        // استيراد وحدات Firebase الضرورية
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+
+
+        // المتغيرات العامة التي يتم توفيرها من بيئة Canvas.
+        // يجب استبدالها بمعلومات مشروع Firebase الخاص بك عند الرفع إلى GitHub.
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'YOUR_APP_ID'; // استبدل YOUR_APP_ID بمعرف التطبيق الفعلي الخاص بك
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "YOUR_API_KEY", // استبدل بمعرف API الخاص بك
+            authDomain: "YOUR_AUTH_DOMAIN", // استبدل بنطاق المصادقة الخاص بك
+            projectId: "YOUR_PROJECT_ID", // استبدل بمعرف المشروع الخاص بك
+            storageBucket: "YOUR_STORAGE_BUCKET", // استبدل بدلو التخزين الخاص بك
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID", // استبدل بمعرف مرسل الرسائل الخاص بك
+            appId: "YOUR_APP_ID" // استبدل بمعرف التطبيق الخاص بك
+        };
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null; // يمكنك تركه null إذا كنت تستخدم المصادقة المجهولة
+
+        // تهيئة Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const storage = getStorage(app); // تهيئة Firebase Storage
+
+        let userId = null;
+        let isAuthReady = false;
+
         const uploadArea = document.getElementById('upload-area');
         const imageInput = document.getElementById('image-input');
         const uploadedImagePreview = document.getElementById('uploaded-image-preview');
         const imageDescriptionInput = document.getElementById('image-description');
         const addToGalleryBtn = document.getElementById('add-to-gallery-btn');
         const imageGallery = document.getElementById('image-gallery');
+        const buttonText = document.getElementById('button-text');
+        const loader = document.getElementById('loader');
+        const uploadStatusAlert = document.getElementById('upload-status-alert');
+        const userIdText = document.getElementById('user-id-text');
+        const loadingGalleryMessage = document.getElementById('loading-gallery-message');
 
-        let currentImageFile = null; // To store the file object for adding to gallery
+        let currentImageFile = null; // لتخزين كائن الملف المراد رفعه
 
-        // Simulate click on hidden file input when upload area is clicked
+        // دالة لإظهار رسائل التنبيه
+        function showAlert(message, type) {
+            uploadStatusAlert.textContent = message;
+            uploadStatusAlert.className = `alert mt-4 ${type}`;
+            uploadStatusAlert.style.display = 'block';
+            setTimeout(() => {
+                uploadStatusAlert.style.display = 'none';
+            }, 5000); // إخفاء بعد 5 ثوانٍ للتحذيرات الهامة
+        }
+
+        // عرض الصور في المعرض
+        function renderImage(imageData) {
+            const galleryItem = document.createElement('div');
+            galleryItem.classList.add('gallery-item');
+
+            galleryItem.innerHTML = `
+                <img src="${imageData.imageUrl}" alt="${imageData.description || imageData.name}">
+                <div class="gallery-item-overlay">
+                    <h3 class="font-semibold text-lg">${imageData.description || imageData.name}</h3>
+                    <p class="text-sm">${imageData.description ? 'الوصف: ' + imageData.description : 'لا يوجد وصف.'}</p>
+                </div>
+            `;
+            imageGallery.prepend(galleryItem); // أضف في بداية المعرض (الأحدث أولاً)
+        }
+
+        // تحميل الصور من Firestore في الوقت الفعلي
+        function loadImagesFromFirestore() {
+            if (!isAuthReady || !userId) {
+                console.log("Firebase ليس جاهزًا أو معرف المستخدم غير متاح بعد.");
+                return;
+            }
+
+            // مسار البيانات الخاصة للمستخدم: /artifacts/{appId}/users/{userId}/{اسم_مجموعتك}
+            const imagesCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/images`);
+            const q = query(imagesCollectionRef); 
+
+            onSnapshot(q, (snapshot) => {
+                loadingGalleryMessage.style.display = 'none'; // إخفاء رسالة التحميل بمجرد بدء وصول البيانات
+                imageGallery.innerHTML = ''; // مسح الصور الموجودة لإعادة العرض
+                if (snapshot.empty) {
+                    imageGallery.innerHTML = '<div class="text-center text-gray-500 col-span-full">لا توجد صور بعد. ابدأ برفع واحدة!</div>';
+                } else {
+                    snapshot.docs.forEach(doc => {
+                        const imageData = doc.data();
+                        renderImage(imageData);
+                    });
+                }
+            }, (error) => {
+                console.error("خطأ في جلب الصور: ", error);
+                loadingGalleryMessage.textContent = 'حدث خطأ أثناء تحميل الصور.';
+                loadingGalleryMessage.style.display = 'block';
+                showAlert('حدث خطأ أثناء تحميل الصور. يرجى التحقق من اتصالك بالإنترنت.', 'alert-error');
+            });
+        }
+
+        // التعامل مع تحديد الملف (النقر أو السحب والإفلات)
         uploadArea.addEventListener('click', () => {
             imageInput.click();
         });
 
-        // Handle file selection
         imageInput.addEventListener('change', (event) => {
             const file = event.target.files[0];
             if (file) {
@@ -206,7 +311,7 @@
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     uploadedImagePreview.src = e.target.result;
-                    uploadedImagePreview.style.display = 'block'; // Show the preview
+                    uploadedImagePreview.style.display = 'block';
                 };
                 reader.readAsDataURL(file);
             } else {
@@ -216,7 +321,7 @@
             }
         });
 
-        // Handle drag and drop functionality
+        // وظيفة السحب والإفلات
         uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
             uploadArea.classList.add('border-blue-500', 'bg-blue-50');
@@ -240,42 +345,103 @@
                 };
                 reader.readAsDataURL(file);
             } else {
-                alert('الرجاء إسقاط ملف صورة صالح.'); // Use custom modal in real app
+                showAlert('الرجاء إسقاط ملف صورة صالح (JPG, PNG, GIF).', 'alert-error');
             }
         });
 
-        // Add image to gallery (simulated)
-        addToGalleryBtn.addEventListener('click', () => {
-            if (currentImageFile) {
-                const imageUrl = uploadedImagePreview.src;
-                const description = imageDescriptionInput.value.trim();
-                const imageName = currentImageFile.name.split('.').slice(0, -1).join('.'); // Get name without extension
+        // إضافة الصورة إلى المعرض (وحفظها في Firebase Storage و Firestore)
+        addToGalleryBtn.addEventListener('click', async () => {
+            if (!isAuthReady || !userId) {
+                showAlert('الرجاء الانتظار حتى يتم تهيئة النظام.', 'alert-error');
+                return;
+            }
 
-                const galleryItem = document.createElement('div');
-                galleryItem.classList.add('gallery-item');
+            if (!currentImageFile) {
+                showAlert('الرجاء تحديد صورة لرفعها أولاً.', 'alert-error');
+                return;
+            }
 
-                galleryItem.innerHTML = `
-                    <img src="${imageUrl}" alt="${description || imageName}">
-                    <div class="gallery-item-overlay">
-                        <h3 class="font-semibold text-lg">${description || imageName}</h3>
-                        <p class="text-sm">${description ? 'الوصف: ' + description : 'لا يوجد وصف.'}</p>
-                    </div>
-                `;
-                imageGallery.prepend(galleryItem); // Add to the beginning of the gallery
+            // تفعيل حالة التحميل
+            buttonText.textContent = 'جاري الرفع...';
+            loader.style.display = 'block';
+            addToGalleryBtn.disabled = true;
 
-                // Reset upload area
+            try {
+                const imageName = currentImageFile.name;
+                const imageDescription = imageDescriptionInput.value.trim();
+
+                // إنشاء اسم ملف فريد للتخزين (مجلد المستخدم -> تاريخ الرفع_اسم_الملف)
+                const storageRef = ref(storage, `artifacts/${appId}/users/${userId}/images/${Date.now()}_${imageName}`);
+
+                // رفع الملف إلى Firebase Storage
+                const snapshot = await uploadBytes(storageRef, currentImageFile);
+                const imageUrl = await getDownloadURL(snapshot.ref); // الحصول على رابط التنزيل العام
+
+                // حفظ بيانات الصورة الوصفية (بما في ذلك رابط Storage) إلى Firestore
+                const imageDoc = {
+                    name: imageName,
+                    description: imageDescription,
+                    imageUrl: imageUrl, // تخزين رابط Storage هنا
+                    timestamp: Date.now(),
+                    userId: userId
+                };
+
+                const imagesCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/images`);
+                await addDoc(imagesCollectionRef, imageDoc);
+
+                // إعادة تعيين منطقة الرفع
                 uploadedImagePreview.src = '#';
                 uploadedImagePreview.style.display = 'none';
                 imageDescriptionInput.value = '';
-                imageInput.value = ''; // Clear file input
+                imageInput.value = ''; // مسح حقل إدخال الملف
                 currentImageFile = null;
 
-                // Simple message for successful upload (replace with real feedback)
-                alert('تمت إضافة الصورة إلى المعرض بنجاح (محاكاة).'); // Use custom modal in real app
-            } else {
-                alert('الرجاء تحديد صورة لرفعها أولاً.'); // Use custom modal in real app
+                showAlert('تم حفظ الصورة وإضافتها إلى المعرض بنجاح!', 'alert-success');
+
+            } catch (error) {
+                console.error("خطأ في حفظ الصورة: ", error);
+                // التحقق مما إذا كان الخطأ هو خطأ رفض الأذونات من Storage
+                if (error.code === 'storage/unauthorized' || error.code === 'permission-denied') {
+                    showAlert('فشل حفظ الصورة: لا تملك صلاحية الوصول. يرجى التأكد من قواعد أمان Firebase.', 'alert-error');
+                    console.error('Firebase Storage/Firestore Permission Error: Please check your Firebase Storage and Firestore security rules. Ensure they allow authenticated users to write to their respective paths.');
+                } else {
+                    showAlert(`فشل حفظ الصورة: ${error.message}. يرجى المحاولة مرة أخرى.`, 'alert-error');
+                }
+            } finally {
+                // إعادة تعيين حالة الزر
+                buttonText.textContent = 'إضافة إلى المعرض';
+                loader.style.display = 'none';
+                addToGalleryBtn.disabled = false;
             }
         });
+
+        // مصادقة Firebase وتهيئة المستخدم
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                userId = user.uid;
+                userIdText.textContent = userId;
+                isAuthReady = true;
+                loadImagesFromFirestore(); // تحميل الصور بمجرد المصادقة
+            } else {
+                // تسجيل الدخول كمجهول إذا لم يكن هناك مستخدم مسجل الدخول
+                try {
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                        console.log("تم تسجيل الدخول برمز مخصص.");
+                    } else {
+                        await signInAnonymously(auth);
+                        console.log("تم تسجيل الدخول كمجهول.");
+                    }
+                } catch (error) {
+                    console.error("خطأ أثناء المصادقة:", error);
+                    userIdText.textContent = "خطأ في المصادقة";
+                    showAlert('حدث خطأ في المصادقة. يرجى إعادة تحميل الصفحة.', 'alert-error');
+                }
+            }
+        });
+
+        // رسالة تحميل أولية للمعرض
+        loadingGalleryMessage.style.display = 'block';
     </script>
 </body>
 </html>
