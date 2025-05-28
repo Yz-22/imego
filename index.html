@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>معرض الصور الخاص بي</title>
+    <title>معرض الصور (Supabase)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -24,7 +24,7 @@
             overflow: hidden;
         }
         .btn-primary {
-            background-color: #007bff;
+            background-color: #16a34a; /* Supabase green */
             color: white;
             padding: 0.75rem 1.5rem;
             border-radius: 9999px;
@@ -33,7 +33,7 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         .btn-primary:hover {
-            background-color: #0056b3;
+            background-color: #15803d; /* Darker green on hover */
             transform: translateY(-1px);
         }
         .image-upload-area {
@@ -97,7 +97,7 @@
         /* Loader Spinner */
         .loader {
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
+            border-top: 4px solid #16a34a; /* Supabase green */
             border-radius: 50%;
             width: 24px;
             height: 24px;
@@ -116,14 +116,14 @@
             display: none; /* Hidden by default */
         }
         .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border-color: #c3e6cb;
+            background-color: #dcfce7; /* Light green */
+            color: #166534;
+            border-color: #a7f3d0;
         }
         .alert-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border-color: #f5c6cb;
+            background-color: #fee2e2; /* Light red */
+            color: #b91c1c;
+            border-color: #fecaca;
         }
         .user-id-display {
             background-color: #e2e8f0;
@@ -140,13 +140,12 @@
 
     <header class="bg-white shadow-lg p-4 flex justify-between items-center border-b border-gray-200">
         <div class="flex items-center">
-            <span class="text-3xl font-extrabold text-blue-700 ml-2">ImageFlow</span>
-            <span class="text-2xl font-bold text-gray-800">معرض الصور الخاص بي</span>
+            <span class="text-3xl font-extrabold text-green-700 ml-2">ImageFlow</span> <span class="text-2xl font-bold text-gray-800">معرض الصور الخاص بي</span>
         </div>
         <nav>
             <ul class="flex space-x-6 space-x-reverse items-center">
-                <li><a href="#" class="text-gray-700 hover:text-blue-600 font-medium transition duration-300">الصفحة الرئيسية</a></li>
-                <li><a href="#" class="text-gray-700 hover:text-blue-600 font-medium transition duration-300">استكشاف</a></li>
+                <li><a href="#" class="text-gray-700 hover:text-green-600 font-medium transition duration-300">الصفحة الرئيسية</a></li>
+                <li><a href="#" class="text-gray-700 hover:text-green-600 font-medium transition duration-300">استكشاف</a></li>
                 <li><a href="#" class="btn-primary flex items-center">
                     <i class="fas fa-upload ml-2"></i>
                     <span>رفع صورة</span>
@@ -164,12 +163,12 @@
             <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">رفع صورة جديدة</h2>
             <div id="upload-area" class="image-upload-area">
                 <input type="file" id="image-input" accept="image/*" class="hidden">
-                <i class="fas fa-image text-blue-500 text-5xl mb-4"></i>
-                <p class="text-gray-700 text-lg font-semibold">اسحب وأفلت صورتك هنا أو <span class="text-blue-600 cursor-pointer">انقر للرفع</span></p>
+                <i class="fas fa-image text-green-500 text-5xl mb-4"></i>
+                <p class="text-gray-700 text-lg font-semibold">اسحب وأفلت صورتك هنا أو <span class="text-green-600 cursor-pointer">انقر للرفع</span></p>
                 <p class="text-gray-500 text-sm mt-2">صيغ الملفات المدعومة: JPG, PNG, GIF</p>
             </div>
             <img id="uploaded-image-preview" src="#" alt="Image Preview" class="image-preview">
-            <input type="text" id="image-description" placeholder="أضف وصفاً للصورة (اختياري)..." class="w-full p-3 border border-gray-300 rounded-lg mt-4 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800">
+            <input type="text" id="image-description" placeholder="أضف وصفاً للصورة (اختياري)..." class="w-full p-3 border border-gray-300 rounded-lg mt-4 focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-800">
             <button id="add-to-gallery-btn" class="btn-primary w-full mt-4 flex items-center justify-center">
                 <span id="button-text">إضافة إلى المعرض</span>
                 <div id="loader" class="loader ml-2"></div>
@@ -188,47 +187,42 @@
     <footer class="bg-gray-900 text-white p-6 text-center mt-8">
         <p class="mb-3">&copy; 2023 ImageFlow. جميع الحقوق محفوظة.</p>
         <div class="flex justify-center space-x-6 space-x-reverse mt-2">
-            <a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300">سياسة الخصوصية</a>
-            <a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300">شروط الخدمة</a>
-            <a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300">اتصل بنا</a>
+            <a href="#" class="text-gray-400 hover:text-green-400 transition duration-300">سياسة الخصوصية</a>
+            <a href="#" class="text-gray-400 hover:text-green-400 transition duration-300">شروط الخدمة</a>
+            <a href="#" class="text-gray-400 hover:text-green-400 transition duration-300">اتصل بنا</a>
         </div>
         <div class="flex justify-center space-x-4 space-x-reverse mt-4 text-xl">
-            <a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300"><i class="fab fa-facebook"></i></a>
-            <a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300"><i class="fab fa-twitter"></i></a>
-            <a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300"><i class="fab fa-instagram"></i></a>
-            <a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300"><i class="fab fa-youtube"></i></a>
+            <a href="#" class="text-gray-400 hover:text-green-400 transition duration-300"><i class="fab fa-facebook"></i></a>
+            <a href="#" class="text-gray-400 hover:text-green-400 transition duration-300"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="text-gray-400 hover:text-green-400 transition duration-300"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="text-gray-400 hover:text-green-400 transition duration-300"><i class="fab fa-youtube"></i></a>
         </div>
     </footer>
 
     <script type="module">
-        // استيراد وحدات Firebase الضرورية
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
 
-
-        // المتغيرات العامة التي يتم توفيرها من بيئة Canvas.
-        // يجب استبدالها بمعلومات مشروع Firebase الخاص بك عند الرفع إلى GitHub.
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'YOUR_APP_ID'; // استبدل YOUR_APP_ID بمعرف التطبيق الفعلي الخاص بك
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            apiKey: "AIzaSyA05638GhtpAP2_V2K-hFwhxM277mVtUZs", // استبدل بمعرف API الخاص بك
-            authDomain: "fafa-d1a8a.firebaseapp.com", // استبدل بنطاق المصادقة الخاص بك
-            projectId: "fafa-d1a8a", // استبدل بمعرف المشروع الخاص بك
-            storageBucket: "fafa-d1a8a.firebasestorage.app", // استبدل بدلو التخزين الخاص بك
-            messagingSenderId: "622823315017", // استبدل بمعرف مرسل الرسائل الخاص بك
-            appId: "1:622823315017:web:e502996de15aad914bd198" // استبدل بمعرف التطبيق الخاص بك
-        };
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null; // يمكنك تركه null إذا كنت تستخدم المصادقة المجهولة
-
-        // تهيئة Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-        const storage = getStorage(app); // تهيئة Firebase Storage
+        // قم بتغيير هذه المتغيرات لمعلومات مشروع Supabase الخاص بك!
+        // تأكد من استبدال 'YOUR_SUPABASE_URL' و 'YOUR_SUPABASE_ANON_KEY' بالقيم الفعلية من لوحة تحكم Supabase.
+        const SUPABASE_URL = 'https://supabase.com/dashboard/project/oxcbtiyfurdknjulunze'; // مثال: https://abcdefg1234.supabase.co
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94Y2J0aXlmdXJka25qdWx1bnplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg0NjU0NTYsImV4cCI6MjA2NDA0MTQ1Nn0.bu2Pazn59bXhdDcu4C5s0wHhcxDnCfyrZbnKWYc0NSw'; // مثال: eyJhbGciOiJIUzI1Ni...
 
         let userId = null;
-        let isAuthReady = false;
+        let isAuthReady = false; 
+
+        let supabase = null; 
+
+        // التحقق من أن المتغيرات قد تم تحديثها
+        if (SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY') {
+            console.error("خطأ في تهيئة Supabase: الرجاء تحديث 'SUPABASE_URL' و 'SUPABASE_ANON_KEY' بالقيم الفعلية من مشروعك في Supabase.");
+            alert("خطأ في تهيئة Supabase: الرجاء تحديث 'SUPABASE_URL' و 'SUPABASE_ANON_KEY' بالقيم الفعلية من مشروعك في Supabase.");
+            isAuthReady = false; 
+            // لا تقم بتهيئة Supabase إذا كانت المتغيرات غير صحيحة
+        } else {
+            // قم بتهيئة عميل Supabase فقط إذا كانت المتغيرات صحيحة
+            supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            // isAuthReady سيتم تعيينها بواسطة onAuthStateChange
+        }
 
         const uploadArea = document.getElementById('upload-area');
         const imageInput = document.getElementById('image-input');
@@ -242,7 +236,7 @@
         const userIdText = document.getElementById('user-id-text');
         const loadingGalleryMessage = document.getElementById('loading-gallery-message');
 
-        let currentImageFile = null; // لتخزين كائن الملف المراد رفعه
+        let currentImageFile = null;
 
         // دالة لإظهار رسائل التنبيه
         function showAlert(message, type) {
@@ -251,7 +245,7 @@
             uploadStatusAlert.style.display = 'block';
             setTimeout(() => {
                 uploadStatusAlert.style.display = 'none';
-            }, 5000); // إخفاء بعد 5 ثوانٍ للتحذيرات الهامة
+            }, 5000);
         }
 
         // عرض الصور في المعرض
@@ -259,44 +253,61 @@
             const galleryItem = document.createElement('div');
             galleryItem.classList.add('gallery-item');
 
+            const imageUrl = imageData.image_url; 
+
             galleryItem.innerHTML = `
-                <img src="${imageData.imageUrl}" alt="${imageData.description || imageData.name}">
+                <img src="${imageUrl}" alt="${imageData.description || imageData.name}">
                 <div class="gallery-item-overlay">
                     <h3 class="font-semibold text-lg">${imageData.description || imageData.name}</h3>
                     <p class="text-sm">${imageData.description ? 'الوصف: ' + imageData.description : 'لا يوجد وصف.'}</p>
                 </div>
             `;
-            imageGallery.prepend(galleryItem); // أضف في بداية المعرض (الأحدث أولاً)
+            imageGallery.prepend(galleryItem);
         }
 
-        // تحميل الصور من Firestore في الوقت الفعلي
-        function loadImagesFromFirestore() {
-            if (!isAuthReady || !userId) {
-                console.log("Firebase ليس جاهزًا أو معرف المستخدم غير متاح بعد.");
+        // تحميل الصور من Supabase في الوقت الفعلي
+        async function loadImagesFromSupabase() {
+            if (!isAuthReady || !userId || !supabase) { // أضف التحقق من supabase
+                console.log("Supabase ليس جاهزًا أو معرف المستخدم غير متاح بعد.");
                 return;
             }
 
-            // مسار البيانات الخاصة للمستخدم: /artifacts/{appId}/users/{userId}/{اسم_مجموعتك}
-            const imagesCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/images`);
-            const q = query(imagesCollectionRef); 
+            loadingGalleryMessage.style.display = 'block';
+            imageGallery.innerHTML = ''; // مسح الصور الموجودة قبل التحميل
 
-            onSnapshot(q, (snapshot) => {
-                loadingGalleryMessage.style.display = 'none'; // إخفاء رسالة التحميل بمجرد بدء وصول البيانات
-                imageGallery.innerHTML = ''; // مسح الصور الموجودة لإعادة العرض
-                if (snapshot.empty) {
-                    imageGallery.innerHTML = '<div class="text-center text-gray-500 col-span-full">لا توجد صور بعد. ابدأ برفع واحدة!</div>';
-                } else {
-                    snapshot.docs.forEach(doc => {
-                        const imageData = doc.data();
-                        renderImage(imageData);
-                    });
-                }
-            }, (error) => {
-                console.error("خطأ في جلب الصور: ", error);
+            let { data: images, error } = await supabase
+                .from('images') // اسم الجدول الخاص بك في Supabase
+                .select('*')
+                .eq('user_id', userId) // جلب الصور الخاصة بهذا المستخدم فقط
+                .order('created_at', { ascending: false }); // ترتيب حسب الأحدث
+
+            if (error) {
+                console.error("خطأ في جلب الصور من Supabase:", error);
                 loadingGalleryMessage.textContent = 'حدث خطأ أثناء تحميل الصور.';
-                loadingGalleryMessage.style.display = 'block';
-                showAlert('حدث خطأ أثناء تحميل الصور. يرجى التحقق من اتصالك بالإنترنت.', 'alert-error');
-            });
+                showAlert('حدث خطأ أثناء تحميل الصور: ' + error.message, 'alert-error');
+                return;
+            }
+
+            loadingGalleryMessage.style.display = 'none';
+            if (images.length === 0) {
+                imageGallery.innerHTML = '<div class="text-center text-gray-500 col-span-full">لا توجد صور بعد. ابدأ برفع واحدة!</div>';
+            } else {
+                images.forEach(image => {
+                    renderImage(image);
+                });
+            }
+
+            // تفعيل المزامنة في الوقت الفعلي (لتحديثات INSERT/UPDATE/DELETE)
+            // تأكد من تفعيل Realtime في Supabase dashboard لجدول 'images'
+            supabase
+                .channel('public:images')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'images', filter: `user_id=eq.${userId}` }, payload => {
+                    console.log('Realtime change received!', payload);
+                    if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE' || payload.eventType === 'DELETE') {
+                       loadImagesFromSupabase();
+                    }
+                })
+                .subscribe();
         }
 
         // التعامل مع تحديد الملف (النقر أو السحب والإفلات)
@@ -324,17 +335,17 @@
         // وظيفة السحب والإفلات
         uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
-            uploadArea.classList.add('border-blue-500', 'bg-blue-50');
+            uploadArea.classList.add('border-green-500', 'bg-green-50'); /* Changed to green for Supabase theme */
         });
 
         uploadArea.addEventListener('dragleave', (e) => {
             e.preventDefault();
-            uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
+            uploadArea.classList.remove('border-green-500', 'bg-green-50');
         });
 
         uploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
-            uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
+            uploadArea.classList.remove('border-green-500', 'bg-green-50');
             const file = e.dataTransfer.files[0];
             if (file && file.type.startsWith('image/')) {
                 currentImageFile = file;
@@ -349,9 +360,9 @@
             }
         });
 
-        // إضافة الصورة إلى المعرض (وحفظها في Firebase Storage و Firestore)
+        // إضافة الصورة إلى المعرض (وحفظها في Supabase Storage و PostgreSQL)
         addToGalleryBtn.addEventListener('click', async () => {
-            if (!isAuthReady || !userId) {
+            if (!isAuthReady || !userId || !supabase) { // أضف التحقق من supabase
                 showAlert('الرجاء الانتظار حتى يتم تهيئة النظام.', 'alert-error');
                 return;
             }
@@ -369,25 +380,49 @@
             try {
                 const imageName = currentImageFile.name;
                 const imageDescription = imageDescriptionInput.value.trim();
+                const fileExtension = imageName.split('.').pop();
+                const filePath = `${userId}/${Date.now()}.${fileExtension}`; // مسار فريد داخل مجلد المستخدم
 
-                // إنشاء اسم ملف فريد للتخزين (مجلد المستخدم -> تاريخ الرفع_اسم_الملف)
-                const storageRef = ref(storage, `artifacts/${appId}/users/${userId}/images/${Date.now()}_${imageName}`);
+                // رفع الملف إلى Supabase Storage
+                // تأكد من أن 'images_bucket' هو اسم bucket الخاص بك
+                const { data: uploadData, error: uploadError } = await supabase.storage
+                    .from('images_bucket') // تأكد من استخدام اسم bucket الصحيح هنا
+                    .upload(filePath, currentImageFile, {
+                        cacheControl: '3600',
+                        upsert: false // لا تقم بالاستبدال إذا كان الملف موجودًا
+                    });
 
-                // رفع الملف إلى Firebase Storage
-                const snapshot = await uploadBytes(storageRef, currentImageFile);
-                const imageUrl = await getDownloadURL(snapshot.ref); // الحصول على رابط التنزيل العام
+                if (uploadError) {
+                    throw uploadError;
+                }
+                
+                // الحصول على الرابط العام للصورة المرفوعة
+                const { data: publicUrlData } = supabase.storage
+                    .from('images_bucket') // تأكد من استخدام اسم bucket الصحيح هنا
+                    .getPublicUrl(filePath);
+                
+                const imageUrl = publicUrlData.publicUrl;
 
-                // حفظ بيانات الصورة الوصفية (بما في ذلك رابط Storage) إلى Firestore
-                const imageDoc = {
-                    name: imageName,
-                    description: imageDescription,
-                    imageUrl: imageUrl, // تخزين رابط Storage هنا
-                    timestamp: Date.now(),
-                    userId: userId
-                };
+                if (!imageUrl) {
+                    throw new Error('فشل الحصول على رابط الصورة العام.');
+                }
 
-                const imagesCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/images`);
-                await addDoc(imagesCollectionRef, imageDoc);
+                // حفظ بيانات الصورة الوصفية (بما في ذلك رابط Storage) إلى جدول 'images' في PostgreSQL
+                const { error: dbError } = await supabase
+                    .from('images') // اسم الجدول الخاص بك
+                    .insert([
+                        {
+                            name: imageName,
+                            description: imageDescription,
+                            image_url: imageUrl,
+                            user_id: userId,
+                            created_at: new Date().toISOString() // طابع زمني
+                        }
+                    ]);
+
+                if (dbError) {
+                    throw dbError;
+                }
 
                 // إعادة تعيين منطقة الرفع
                 uploadedImagePreview.src = '#';
@@ -400,13 +435,7 @@
 
             } catch (error) {
                 console.error("خطأ في حفظ الصورة: ", error);
-                // التحقق مما إذا كان الخطأ هو خطأ رفض الأذونات من Storage
-                if (error.code === 'storage/unauthorized' || error.code === 'permission-denied') {
-                    showAlert('فشل حفظ الصورة: لا تملك صلاحية الوصول. يرجى التأكد من قواعد أمان Firebase.', 'alert-error');
-                    console.error('Firebase Storage/Firestore Permission Error: Please check your Firebase Storage and Firestore security rules. Ensure they allow authenticated users to write to their respective paths.');
-                } else {
-                    showAlert(`فشل حفظ الصورة: ${error.message}. يرجى المحاولة مرة أخرى.`, 'alert-error');
-                }
+                showAlert(`فشل حفظ الصورة: ${error.message}. يرجى المحاولة مرة أخرى.`, 'alert-error');
             } finally {
                 // إعادة تعيين حالة الزر
                 buttonText.textContent = 'إضافة إلى المعرض';
@@ -415,30 +444,34 @@
             }
         });
 
-        // مصادقة Firebase وتهيئة المستخدم
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                userId = user.uid;
-                userIdText.textContent = userId;
-                isAuthReady = true;
-                loadImagesFromFirestore(); // تحميل الصور بمجرد المصادقة
-            } else {
-                // تسجيل الدخول كمجهول إذا لم يكن هناك مستخدم مسجل الدخول
-                try {
-                    if (initialAuthToken) {
-                        await signInWithCustomToken(auth, initialAuthToken);
-                        console.log("تم تسجيل الدخول برمز مخصص.");
-                    } else {
-                        await signInAnonymously(auth);
-                        console.log("تم تسجيل الدخول كمجهول.");
+        // مصادقة Supabase وتهيئة المستخدم
+        // استخدام onAuthStateChange لتتبع حالة المستخدم
+        if (supabase) { // تأكد من تهيئة supabase قبل استخدامه
+            supabase.auth.onAuthStateChange(async (event, session) => {
+                if (session) {
+                    userId = session.user.id;
+                    userIdText.textContent = userId;
+                    isAuthReady = true;
+                    await loadImagesFromSupabase(); // تحميل الصور بمجرد المصادقة
+                } else {
+                    // محاولة تسجيل الدخول كمجهول إذا لم يكن هناك جلسة
+                    try {
+                        const { data, error } = await supabase.auth.signInAnonymously();
+                        if (error) throw error;
+                        userId = data.user.id;
+                        userIdText.textContent = userId;
+                        isAuthReady = true;
+                        await loadImagesFromSupabase();
+                        console.log("تم تسجيل الدخول كمجهول في Supabase.");
+                    } catch (error) {
+                        console.error("خطأ أثناء المصادقة المجهولة في Supabase:", error);
+                        userIdText.textContent = "خطأ في المصادقة";
+                        showAlert('حدث خطأ في المصادقة. يرجى إعادة تحميل الصفحة.', 'alert-error');
                     }
-                } catch (error) {
-                    console.error("خطأ أثناء المصادقة:", error);
-                    userIdText.textContent = "خطأ في المصادقة";
-                    showAlert('حدث خطأ في المصادقة. يرجى إعادة تحميل الصفحة.', 'alert-error');
                 }
-            }
-        });
+            });
+        }
+
 
         // رسالة تحميل أولية للمعرض
         loadingGalleryMessage.style.display = 'block';
